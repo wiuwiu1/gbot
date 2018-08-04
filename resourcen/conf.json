@@ -1,10 +1,9 @@
 {
   "bot": {
-    "ip": "127",
-    "name": "",
-    "serverquery": {
-      "username": "",
-      "password": ""
-    }
+    "ip": "127.0.0.1",
+    "nickname": "GBot",
+    "username": "serveradmin",
+    "pw": "",
+    "vsId": "1"
   }
 }
