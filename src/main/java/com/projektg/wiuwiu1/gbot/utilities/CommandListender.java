@@ -39,7 +39,7 @@ public class CommandListender extends Thread{
                 Class commandclass = Class.forName(className);
                 Constructor con = commandclass.getConstructor(Bot.class);
                 Object command = con.newInstance(bot);
-                command.run();
+                //command.run();
             } catch(ClassNotFoundException e){
                 
             } catch(InstantiationException e){

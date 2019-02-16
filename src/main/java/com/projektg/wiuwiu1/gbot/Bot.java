@@ -3,6 +3,7 @@ package com.projektg.wiuwiu1.gbot;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
+import com.projektg.wiuwiu1.gbot.utilities.CommandListender;
 
 
 public class Bot {
@@ -33,7 +34,16 @@ public class Bot {
         api.selectVirtualServerById(1); //vsid anstatt 1
         api.setNickname(this.nickname);
         api.sendChannelMessage(this.nickname + " is online!");
+        
+        CommandListender cl = new CommandListender(this);
+        cl.start();
     }
+    
+    public void stop(){
+        System.exit(0);
+    }
+    
+    
 
     @Override
     public String toString() {
