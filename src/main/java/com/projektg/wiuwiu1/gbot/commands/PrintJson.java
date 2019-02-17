@@ -21,4 +21,9 @@ public class PrintJson extends Command{
    public void run(){
        System.out.println(super.bot.toString());
    }
+   
+   @Override
+    public String toString() {
+        return "printjson - prints all Informations about the bot";
+    }
 }

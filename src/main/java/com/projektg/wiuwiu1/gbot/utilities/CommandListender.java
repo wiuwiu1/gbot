@@ -26,20 +26,24 @@ public class CommandListender extends Thread{
     
     @Override
     public void run() {
+        System.out.println("commandListender started");
         String line = "";
         while (line.equalsIgnoreCase("quit") == false) {
             try {
-            line = in.readLine();
+                System.out.println("insert command: ");
+                line = in.readLine();
             } catch(IOException e){
                 
             }
             
             try {
+                System.out.println("try to resolve command...");
                 String className = (String) commands.get(line);
                 Class commandclass = Class.forName(className);
                 Constructor con = commandclass.getConstructor(Bot.class);
-                Object command = con.newInstance(bot);
-                //command.run();
+                Command command = (Command) con.newInstance(bot);
+                System.out.println(command.toString());
+                command.run();
             } catch(ClassNotFoundException e){
                 
             } catch(InstantiationException e){
@@ -49,7 +53,7 @@ public class CommandListender extends Thread{
             } catch(NoSuchMethodException e){
                 
             } catch(InvocationTargetException e){
-                
+                System.out.println("Error: couldnt find Class");
             }
         }
         try {
@@ -62,7 +66,7 @@ public class CommandListender extends Thread{
     }
     
     private void initCommand(){
-        commands.put("printjson", "PrintJson");
+        commands.put("printjson", "com.projektg.wiuwiu1.gbot.commands.PrintJson");
     }
     
 }
