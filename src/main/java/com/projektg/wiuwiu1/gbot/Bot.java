@@ -17,6 +17,7 @@ import com.github.theholywaffle.teamspeak3.api.event.ServerEditedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.TS3Listener;
 import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3ConnectionFailedException;
+import com.projektg.wiuwiu1.gbot.scripts.event.UprankScript;
 import com.projektg.wiuwiu1.gbot.scripts.event.WelcomeMessage;
 import com.projektg.wiuwiu1.gbot.utilities.CommandListender;
 
@@ -70,7 +71,6 @@ public class Bot {
         System.exit(0);
     }
     
-    
 
     @Override
     public String toString() {
@@ -82,16 +82,20 @@ public class Bot {
          //importieren aller event scripts
          
          TS3Listener listeners = new TS3Listener() {
+             
+             private UprankScript us = new UprankScript(api);
+             
              public void onTextMessage(TextMessageEvent tme) {
                  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
              }
 
              public void onClientJoin(ClientJoinEvent cje) {
                  new WelcomeMessage(api, cje).run();
+                 us.runJoin(cje);
              }
 
              public void onClientLeave(ClientLeaveEvent cle) {
-                 
+                 us.runLeave(cle);
              }
 
              public void onServerEdit(ServerEditedEvent see) {
