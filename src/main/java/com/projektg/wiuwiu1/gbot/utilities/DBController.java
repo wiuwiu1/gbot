@@ -11,10 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- *
- * @author wiuwiu1
- */
 public class DBController {
     
     private Connection conn = null;
@@ -27,7 +23,6 @@ public class DBController {
     public void connect(){
         try {
             this.conn = DriverManager.getConnection(this.url);
-            System.out.println("SQLite connection has been established");
         } catch (SQLException e){
             System.out.println(e.getMessage());
         }

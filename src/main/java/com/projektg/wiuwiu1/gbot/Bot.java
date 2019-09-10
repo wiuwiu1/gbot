@@ -19,19 +19,19 @@ import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3ConnectionFailedException;
 import com.projektg.wiuwiu1.gbot.scripts.event.UprankScript;
 import com.projektg.wiuwiu1.gbot.scripts.event.WelcomeMessage;
+import com.projektg.wiuwiu1.gbot.scripts.period.FileRemover;
 import com.projektg.wiuwiu1.gbot.utilities.CommandListender;
-
-
+import com.projektg.wiuwiu1.gbot.utilities.Logger;
 
 public class Bot {
 
-    private String ip;
-    private String nickname;
-    private String username;
-    private String pw;
-    private String vsId;
+    private final String ip;
+    private final String nickname;
+    private final String username;
+    private final String pw;
+    private final String vsId;
 
-    public Bot(String ip, String nickname, String username, String pw, String vsId){
+    public Bot(String ip, String nickname, String username, String pw, String vsId) {
         this.ip = ip;
         this.nickname = nickname;
         this.username = username;
@@ -44,97 +44,107 @@ public class Bot {
         config.setHost(this.ip);
 
         final TS3Query query = new TS3Query(config);
-        try{
-        query.connect();
-        } catch(TS3ConnectionFailedException e){
-           System.out.println("Failed to connect to Teamspeak Server");
-           System.out.println("Shutdown");
-           stop();
+        try {
+            query.connect();
+        } catch (TS3ConnectionFailedException e) {
+            Logger.log("System", "ERROR: failed to connect to teamspeak server");
+            stop();
         }
-        System.out.println("Bot has connected to Query");
+        Logger.log("System", "bot has connected to query");
 
         final TS3Api api = query.getApi();
         api.login(username, pw);
         api.selectVirtualServerById(1); //vsid anstatt 1
         api.setNickname(this.nickname);
         api.sendChannelMessage(this.nickname + " is online!");
-        
+
         CommandListender cl = new CommandListender(this);
         cl.start();
-        
-        //load all Event scripts
         initEventScripts(api);
-        
+        initTimedScripts(api);
     }
-    
-    public void stop(){
+
+    public void stop() {
+        Logger.log("System", "shutdown");
+        Logger.exportLog();
         System.exit(0);
     }
-    
 
     @Override
     public String toString() {
         return "ip: " + ip + " nickname: " + nickname + " username: " + username + " pw: " + pw + " vsId: " + vsId;
     }
-    
-    private void initEventScripts(final TS3Api api){
-         api.registerAllEvents(); // nur nötige events sollen importet werden
-         //importieren aller event scripts
-         
-         TS3Listener listeners = new TS3Listener() {
-             
-             private UprankScript us = new UprankScript(api);
-             
-             public void onTextMessage(TextMessageEvent tme) {
-                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-             }
 
-             public void onClientJoin(ClientJoinEvent cje) {
-                 new WelcomeMessage(api, cje).run();
-                 us.runJoin(cje);
-             }
+    private void initEventScripts(final TS3Api api) {
+        api.registerAllEvents(); // nur nötige events sollen importet werden
+        TS3Listener listeners = new TS3Listener() {
+            private UprankScript uprankScript = new UprankScript(api);
 
-             public void onClientLeave(ClientLeaveEvent cle) {
-                 us.runLeave(cle);
-             }
+            @Override
+            public void onTextMessage(TextMessageEvent tme) {
 
-             public void onServerEdit(ServerEditedEvent see) {
-                
-             }
+            }
 
-             public void onChannelEdit(ChannelEditedEvent cee) {
-                 
-             }
+            @Override
+            public void onClientJoin(ClientJoinEvent cje) {
+                new WelcomeMessage(api, cje).run();
+                uprankScript.runJoin(cje);
+            }
 
-             public void onChannelDescriptionChanged(ChannelDescriptionEditedEvent cdee) {
-                 
-             }
+            @Override
+            public void onClientLeave(ClientLeaveEvent cle) {
+                uprankScript.runLeave(cle);
+            }
 
-             public void onClientMoved(ClientMovedEvent cme) {
-                 
-             }
+            @Override
+            public void onServerEdit(ServerEditedEvent see) {
 
-             public void onChannelCreate(ChannelCreateEvent cce) {
-                 
-             }
+            }
 
-             public void onChannelDeleted(ChannelDeletedEvent cde) {
-                 
-             }
+            @Override
+            public void onChannelEdit(ChannelEditedEvent cee) {
 
-             public void onChannelMoved(ChannelMovedEvent cme) {
-                 
-             }
+            }
 
-             public void onChannelPasswordChanged(ChannelPasswordChangedEvent cpce) {
-                 
-             }
+            @Override
+            public void onChannelDescriptionChanged(ChannelDescriptionEditedEvent cdee) {
 
-             public void onPrivilegeKeyUsed(PrivilegeKeyUsedEvent pkue) {
-                 
-             }
-         };
-    
-         api.addTS3Listeners(listeners);
+            }
+
+            @Override
+            public void onClientMoved(ClientMovedEvent cme) {
+
+            }
+
+            @Override
+            public void onChannelCreate(ChannelCreateEvent cce) {
+
+            }
+
+            @Override
+            public void onChannelDeleted(ChannelDeletedEvent cde) {
+
+            }
+
+            @Override
+            public void onChannelMoved(ChannelMovedEvent cme) {
+
+            }
+
+            @Override
+            public void onChannelPasswordChanged(ChannelPasswordChangedEvent cpce) {
+
+            }
+
+            @Override
+            public void onPrivilegeKeyUsed(PrivilegeKeyUsedEvent pkue) {
+
+            }
+        };
+        api.addTS3Listeners(listeners);
+    }
+
+    private void initTimedScripts(final TS3Api api) {
+        new FileRemover(api, 86400000).run();
     }
 }
