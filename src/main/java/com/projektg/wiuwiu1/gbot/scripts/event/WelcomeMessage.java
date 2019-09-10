@@ -27,11 +27,9 @@ public class WelcomeMessage extends BaseEventScript {
     @Override
     public void run() {
         api.getServerGroups().stream().filter((group) -> (group.getName().equalsIgnoreCase(defaultServerGroup) && group.getType() == REGULAR)).forEachOrdered((item) -> {
-            System.out.println(item.getName() + "-" + item.getId());
             for (Client cl : api.getClients()) {
                 if (cl.getId() == event.getClientId()) {
                     for (ServerGroup sg : api.getServerGroupsByClient(cl)) {
-                        System.out.println(sg.getName() + "-" + sg.getId());
                         if (sg.getId() == item.getId() && cl.getCreatedDate().getTime() / 1000 / 60 == new Date().getTime() / 1000 / 60) {
                             super.api.pokeClient(event.getClientId(), message1);
                             super.api.pokeClient(event.getClientId(), message2);
