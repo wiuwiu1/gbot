@@ -1,5 +1,6 @@
 package com.projektg.wiuwiu1.gbot.utilities;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,9 +22,14 @@ public class Logger {
     
     public static void exportLog(){
         try {
-            File file = new File(System.getProperty("user.dir") + "/log-" + new SimpleDateFormat("dd.MM.yyyy-HH.mm.ss").format(new Date()) + ".txt");
-            file.mkdirs();
-            FileWriter fileWriter = new FileWriter(file.getPath(), true);
+            File folder = new File(System.getProperty("user.dir") + "/gbot_log");
+            folder.mkdirs();
+            File file = new File(folder, "/log-" + new SimpleDateFormat("dd.MM.yyyy-HH.mm.ss").format(new Date()) + ".txt");
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file.getPath()));
+            for(String line: output){
+                bufferedWriter.write(line);
+            }
+            bufferedWriter.close();
             output.clear();
         } catch (IOException e) {
             e.printStackTrace();
